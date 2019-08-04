@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "717541386450",
+    "firebase_url": "https://buylite.firebaseio.com",
+    "project_id": "buylite",
+    "storage_bucket": "buylite.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:717541386450:android:98ead32ee1bc5e8e",
+        "android_client_info": {
+          "package_name": "com.pittchallenge.buylite"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "717541386450-pl0t17grc57sqlnuc29shu270pukhoud.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pittchallenge.buylite",
+            "certificate_hash": "4973d875ee5d36e98e92aeac596da1d7d524aeb4"
+          }
+        },
+        {
+          "client_id": "717541386450-rg8u0kq4f5kejnq63s1s1ps194dii5vv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBETbrteOxhvgJ2SyIZIhePCzNu7s7TOig"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "717541386450-rg8u0kq4f5kejnq63s1s1ps194dii5vv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
