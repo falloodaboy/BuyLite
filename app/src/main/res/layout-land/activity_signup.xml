@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/SignUpPasswordField"
         android:layout_width="251dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
@@ -18,11 +18,11 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.751"
-        app:layout_constraintStart_toEndOf="@+id/editText1"
+        app:layout_constraintStart_toEndOf="@+id/SignUpEmailField"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText1"
+        android:id="@+id/SignUpEmailField"
         android:layout_width="251dp"
         android:layout_height="50dp"
         android:layout_marginStart="32dp"
@@ -35,7 +35,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/SignUpUserNameField"
         android:layout_width="251dp"
         android:layout_height="50dp"
         android:layout_marginStart="32dp"
@@ -45,10 +45,10 @@
         android:hint="UserName"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText1" />
+        app:layout_constraintTop_toBottomOf="@+id/SignUpEmailField" />
 
     <EditText
-        android:id="@+id/editText4"
+        android:id="@+id/SignUpPhoneField"
         android:layout_width="249dp"
         android:layout_height="52dp"
         android:layout_marginStart="8dp"
@@ -59,11 +59,11 @@
         android:inputType="phone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.746"
-        app:layout_constraintStart_toEndOf="@+id/editText3"
-        app:layout_constraintTop_toBottomOf="@+id/editText2" />
+        app:layout_constraintStart_toEndOf="@+id/SignUpUserNameField"
+        app:layout_constraintTop_toBottomOf="@+id/SignUpPasswordField" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/SignUpSubmitButton"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -76,6 +76,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.499"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText3" />
+        app:layout_constraintTop_toBottomOf="@+id/SignUpUserNameField" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
