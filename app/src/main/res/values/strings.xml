@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">BuyLite</string>
     <string name="sign_up_text">Sign Up</string>
+    <string name="faq_text_header">Frequently Asked Questions</string>
 </resources>
