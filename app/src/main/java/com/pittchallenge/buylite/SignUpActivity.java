@@ -12,24 +12,26 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 public class SignUpActivity extends AppCompatActivity {
-    UserViewModel model;
+    UserViewModel usermodel;
     private Button signUpButton;
     private final static String TAG  = "SignUpActivity: ";
-
+    private EditText memail, mpassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         signUpButton = findViewById(R.id.SignUpSubmitButton);
-        model = ViewModelProviders.of(this).get(UserViewModel.class);
-
+        usermodel = ViewModelProviders.of(this).get(UserViewModel.class);
+        memail = findViewById(R.id.SignUpEmailField);
+        mpassword = findViewById(R.id.SignUpPasswordField);
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               model.SignInUser();
+               usermodel.SignUpUser(memail.getText().toString(), mpassword.getText().toString());
             }
         });
     }
