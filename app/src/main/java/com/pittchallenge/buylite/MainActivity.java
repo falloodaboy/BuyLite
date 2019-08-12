@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void SignInUser(View view){
         usermodel.SignInUser(memail.getText().toString(), mpassword.getText().toString());
+        startActivity(new Intent(MainActivity.this, LandingPage.class));
     }
     public void launchSignUp(View view){
         this.startActivity(new Intent(this, SignUpActivity.class));
