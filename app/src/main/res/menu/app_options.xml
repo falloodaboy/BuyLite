@@ -4,4 +4,10 @@
     <item
         android:id="@+id/FAQ"
         android:title="FAQ" />
+    <item
+        android:id="@+id/SIGNOUT"
+        android:title="Sign Out" />
+    <item
+        android:id="@+id/CREATEBUYORDER"
+        android:title="CreateBuyOrder" />
 </menu>
