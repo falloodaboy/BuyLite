@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -15,11 +16,13 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
     private UserViewModel usermodel;
     private EditText memail, mpassword;
+    private FirebaseAuth mAuth;
     private static String TAG = "MainActivity: ";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         usermodel = ViewModelProviders.of(this).get(UserViewModel.class);
         memail = findViewById(R.id.EmailTextField);
         mpassword = findViewById(R.id.PasswordTextField);
-
+        mAuth = FirebaseAuth.getInstance();
 
         if(savedInstanceState != null){
             memail.setText(savedInstanceState.getString("EMAIL"));
@@ -37,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void SignInUser(View view){
-        usermodel.SignInUser(memail.getText().toString(), mpassword.getText().toString(), new OnCompleteListener<AuthResult>() {
+        this.SignInUser(memail.getText().toString(), mpassword.getText().toString(), new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())
@@ -45,12 +48,12 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "onComplete: User SignIn Successful.");
                     memail.setText("");
                     mpassword.setText("");
+                    usermodel.setUser(task.getResult().getUser());
                 }
 
                 else{
                     Toast.makeText(getApplicationContext(), "Something went wrong with the login", Toast.LENGTH_LONG).show();
                 }
-
             }
         });
     }
@@ -60,7 +63,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void launchFAQ(View view){
-        this.startActivity(new Intent(this, FAQ_Activity.class));
+        Intent intent = new Intent(new Intent(this, FAQ_Activity.class));
+        //intent.putExtra("MAIN_CONT", (Parcelable) getApplicationContext());
+        this.startActivity(intent);
     }
 
     @Override
@@ -72,7 +77,32 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        usermodel.SignOutUser();
+        if(mAuth.getCurrentUser() != null){
+            mAuth.signOut();
+        }
         super.onDestroy();
     }
+
+    protected void SignInUser(String email, String password, @NonNull OnCompleteListener<AuthResult> listener){
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(listener);
+
+    }
+
 }
+// usermodel.SignInUser(memail.getText().toString(), mpassword.getText().toString(), new OnCompleteListener<AuthResult>() {
+//            @Override
+//            public void onComplete(@NonNull Task<AuthResult> task) {
+//                if(task.isSuccessful())
+//                {
+//                    Log.d(TAG, "onComplete: User SignIn Successful.");
+//                    memail.setText("");
+//                    mpassword.setText("");
+//                    usermodel.setUser(task.getResult().getUser());
+//                }
+//
+//                else{
+//                    Toast.makeText(getApplicationContext(), "Something went wrong with the login", Toast.LENGTH_LONG).show();
+//                }
+//
+//            }
+//        });

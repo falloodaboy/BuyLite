@@ -16,6 +16,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.pittchallenge.buylite.models.BuyOrder;
 import com.pittchallenge.buylite.models.OrderPayload;
 
@@ -38,10 +39,23 @@ public class DataViewModel extends ViewModel {
         listwatcher = new MutableLiveData<>();
     }
 
+    /**
+     * Add an observer to the LiveData object which
+     * will be notified whenever the data in it
+     * changes. Perform any changes to the UI of
+     * the activity with an instance of this view model
+     * using this method.
+     **/
     public void attachObserverToItemList(LifecycleOwner owner, Observer<List<BuyOrder>> observer){
         listwatcher.observe(owner, observer);
     }
 
+    /**
+     * Observers which are attached to this livedata
+     * stay with the owner until it is destroyed.
+     * Call this method to free memory when destroying
+     * your LifeCycleOwner.
+     **/
     public void removeObservers(LifecycleOwner owner){
             listwatcher.removeObservers(owner);
 
@@ -51,57 +65,78 @@ public class DataViewModel extends ViewModel {
     protected void onCleared() {
         if(buyorder != null && listener != null){
             buyorder.removeEventListener(listener);
+
         }
         super.onCleared();
     }
-    /*
+
+    /**
     * Get the DataSnapShot at the BuyOrder child
     * with a list of the buyorders and set the
     * MutableLiveData listwatcher with it. listwatcher
     * cannot be null.
-    * */
+    **/
     protected void setBuyOrdersList(){
+        ValueEventListener orderlistener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<BuyOrder> list = new ArrayList<>();
+               for(DataSnapshot snap : dataSnapshot.getChildren()){
+                    list.add(snap.getValue(BuyOrder.class));
+               }
+                listwatcher.setValue(list);
+            }
 
-        //listwatcher.setValue();
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d(TAG, "onCancelled: BuyOrder List read was cancelled");
+                Log.d(TAG, "onCancelled: Error: " + databaseError);
+
+            }
+        };
+        boolean dataready = listwatcher == null;
+        Log.d(TAG, "setBuyOrdersList: listwatcher is null: " + dataready);
     }
 
+
+
+    public void testDatabase(){
+        buyorder = mBase.getReference().child("BuyOrder");
+        String key = buyorder.push().getKey();
+        Map<String, Object> newmap = new HashMap<>();
+        BuyOrder hold = new BuyOrder("BuyOrder1","Jason Todd",new LatLng(2.773,2.771));
+        hold.addCustomer(new OrderPayload("Ashton Kutcher", "Ketchup", 2));
+        newmap.put( key, hold);
+        newmap.put("order_id", key);
+        listener = buyorder.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d(TAG, "onChildAdded: Successfully added data");
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d(TAG, "onCancelled: Failed to add data.");
+                Log.d(TAG, "onCancelled: " + databaseError);
+            }
+        });
+        buyorder.updateChildren(newmap);
+        setBuyOrdersList();
+    }
 }
 
-//    public void testDatabase(){
-//        buyorder = mBase.getReference().child("BuyOrder");
-//        String key = buyorder.push().getKey();
-//        Map<String, Object> newmap = new HashMap<>();
-//        BuyOrder hold = new BuyOrder("BuyOrder1","Jason Todd",new LatLng(2.773,2.771));
-//        hold.addCustomer(new OrderPayload("Ashton Kutcher", "Ketchup", 2));
-//        newmap.put( key, hold);
-//        newmap.put("order_id", key);
-//        //Log.d(TAG, "testDatabase: " + key);
-//        listener = buyorder.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                Log.d(TAG, "onChildAdded: Successfully added data");
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                Log.d(TAG, "onCancelled: Failed to add data.");
-//                Log.d(TAG, "onCancelled: " + databaseError);
-//            }
-//        });
-//        buyorder.updateChildren(newmap);
-//    }

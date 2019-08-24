@@ -49,6 +49,7 @@ public class CreateBuyOrder extends AppCompatActivity {
 
         usermodel = ViewModelProviders.of(this).get(UserViewModel.class);
         datamodel = ViewModelProviders.of(this).get(DataViewModel.class);
+
         lister  = new ArrayList<>();
         itemlist.setLayoutManager(new LinearLayoutManager(this));
         itemlist.setAdapter(new CreateBuyOrderAdapter(getApplicationContext(), lister));

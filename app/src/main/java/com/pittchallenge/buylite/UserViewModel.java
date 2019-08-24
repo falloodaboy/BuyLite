@@ -16,37 +16,16 @@ import com.pittchallenge.buylite.models.BuyLiteUser;
 
 public class UserViewModel extends ViewModel {
     private static final String TAG = "UserViewModel: ";
-    private FirebaseAuth mAuth;
     private FirebaseDatabase mBase;
     private DatabaseReference root;
     private FirebaseUser user;
-    private static String username;
-    private UserStateChangeListener listener;
+    private  String username;
 
     public UserViewModel(){
-        mAuth = FirebaseAuth.getInstance();
         mBase = FirebaseDatabase.getInstance();
         root = mBase.getReference();
-        listener = new UserStateChangeListener();
-        mAuth.addAuthStateListener(listener);
-    }
-
-
-
-    protected void SignInUser(String email, String password, @NonNull OnCompleteListener<AuthResult> listener){
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(listener);
 
     }
-
-    protected void SignUpUser(String email, String password, String username, @NonNull OnCompleteListener<AuthResult> listener ){
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(listener);
-        this.username = username;
-    }
-
-    public boolean isUserAuthenticated(){
-        return user != null;
-    }
-
 
     public String getUserName(){
         return username;
@@ -54,38 +33,37 @@ public class UserViewModel extends ViewModel {
 
     @Override
     protected void onCleared() {
-        mAuth.removeAuthStateListener(listener);
         super.onCleared();
     }
 
-    protected void SignOutUser(){
-        mAuth.signOut();
-        Log.d(TAG, "SignOutUser: Successful User Sign Out");
+    public void setUser(FirebaseUser u){
+        user = u;
     }
 
     //Upload the BuyLiteUser object to the firebase database.
-    public void UpStreamUser(FirebaseUser userid){
+    public void UpStreamUser(FirebaseUser userid, String username){
         BuyLiteUser mainuser = new BuyLiteUser(userid.getEmail(), userid.getUid(),username);
         root.child("users").child(userid.getUid()).setValue(mainuser);
         user = userid;
+        this.username = username;
     }
 
     /**Define custom classes here!**/
-     class UserStateChangeListener implements FirebaseAuth.AuthStateListener {
-
-        public UserStateChangeListener(){
-
-        }
-
-        @Override
-        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-            user = firebaseAuth.getCurrentUser();
-           if(firebaseAuth.getCurrentUser() != null){
-               Log.d(TAG, "onAuthStateChanged: " + firebaseAuth.getCurrentUser().getEmail());
-           }
-        }
-    }
-
+//     class UserStateChangeListener implements FirebaseAuth.AuthStateListener {
+//
+//        public UserStateChangeListener(){
+//
+//        }
+//
+//        @Override
+//        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//            user = firebaseAuth.getCurrentUser();
+//           if(firebaseAuth.getCurrentUser() != null){
+//               Log.d(TAG, "onAuthStateChanged: " + firebaseAuth.getCurrentUser().getEmail());
+//           }
+//        }
+//    }
+//
 
 
 

@@ -15,25 +15,34 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class FAQ_Activity extends AppCompatActivity {
         private ActionBar actionbar;
-        private UserViewModel usermodel;
+        private DataViewModel datamodel;
         private static final String TAG = "FAQ_Activity";
-
+        private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_faq_);
         actionbar = getSupportActionBar();
-        usermodel = ViewModelProviders.of(this).get(UserViewModel.class);
+        datamodel = ViewModelProviders.of(this).get(DataViewModel.class);
+        mAuth = FirebaseAuth.getInstance();
         if(actionbar != null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
         }
         else
             Log.d(TAG, "actionbar is null! ");
+        Log.d(TAG, "onStart: IsUserAuthenticated? " + (mAuth.getCurrentUser() == null));
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+     //   datamodel.testDatabase();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -48,15 +57,15 @@ public class FAQ_Activity extends AppCompatActivity {
             return true;
         }
         else if(item.getItemId() == R.id.SIGNOUT){
-            if(usermodel.isUserAuthenticated()) {
-                usermodel.SignOutUser();
+            if(mAuth.getCurrentUser() != null) {
+                mAuth.signOut();
                 Toast.makeText(getApplicationContext(), "Signed Out User", Toast.LENGTH_SHORT).show();
                 this.finish();
             }
             return true;
         }
         else if(item.getItemId() == R.id.CREATEBUYORDER){
-            if(usermodel.isUserAuthenticated()){
+            if(mAuth.getCurrentUser() != null){
                 startActivity(new Intent(getApplicationContext(), CreateBuyOrder.class));
 
             }
