@@ -43,22 +43,25 @@ public class BuyOrder implements Parcelable {
         customers.add(cust);
     }
 
+    public void addToCatalog(BuyOrderItem item){
+        itemcatalog.add(item);
+    }
+
     public Map<String, Object> toMap(){
         Map<String, Object> map = new HashMap<>();
         map.put("name", name);
         map.put("host", host);
         map.put("location", pickuplocation);
         map.put("payload", customers);
+        map.put("itemcatalog", itemcatalog);
         return map;
     }
 
-    public void addToCatalog(BuyOrderItem item){
-        itemcatalog.add(item);
-    }
 
-    public BuyOrderItem getItem(int i){
-        return itemcatalog.get(i);
-    }
+
+//    public BuyOrderItem getItem(int i){
+//        return itemcatalog.get(i);
+//    }
 
 
     public static Parcelable.Creator<BuyOrder> CREATOR = new Creator<BuyOrder>() {

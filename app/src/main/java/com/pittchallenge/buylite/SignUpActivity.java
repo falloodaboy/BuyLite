@@ -75,7 +75,7 @@ public class SignUpActivity extends AppCompatActivity {
                                       usermodel.UpStreamUser(task.getResult().getUser(), musername.getText().toString());
                                       Log.d(TAG, "onComplete: User SignUp Successful");
                                       SignUpActivity.this.finish();
-                                      //startActivity(new Intent(SignUpActivity.this, LandingPage.class )); <-- BuyOrderList Activity
+                                      //startActivity(new Intent(SignUpActivity.this, LandingPage.class )); <--
                                   }
                                 }
                             });
@@ -115,8 +115,9 @@ public class SignUpActivity extends AppCompatActivity {
                     startActivity(new Intent(this, FAQ_Activity.class));
                     return true;
                 case R.id.SIGNOUT:
-                    //Toast.makeText(this, "No User Signed In", Toast.LENGTH_SHORT).show();
-                    datamodel.testDatabase();
+                    if(mAuth.getCurrentUser() != null){
+                        mAuth.signOut();
+                    }
                     return true;
                 default:
                     return super.onOptionsItemSelected(item);

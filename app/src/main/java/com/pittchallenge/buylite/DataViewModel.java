@@ -94,8 +94,8 @@ public class DataViewModel extends ViewModel {
 
             }
         };
-        boolean dataready = listwatcher == null;
-        Log.d(TAG, "setBuyOrdersList: listwatcher is null: " + dataready);
+        Log.d(TAG, "setBuyOrdersList: listwatcher: " + listwatcher);
+
     }
 
 
@@ -106,12 +106,15 @@ public class DataViewModel extends ViewModel {
         Map<String, Object> newmap = new HashMap<>();
         BuyOrder hold = new BuyOrder("BuyOrder1","Jason Todd",new LatLng(2.773,2.771));
         hold.addCustomer(new OrderPayload("Ashton Kutcher", "Ketchup", 2));
-        newmap.put( key, hold);
+        hold.addToCatalog(new BuyOrderItem("Ketchup", "Heinz Ketchup."));
+
+        newmap.put(key, hold);
         newmap.put("order_id", key);
         listener = buyorder.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d(TAG, "onChildAdded: Successfully added data");
+                Log.d(TAG, " onChildAdded: Successfully added data");
+                //Log.d(TAG, dataSnapshot.getValue().toString());
             }
 
             @Override

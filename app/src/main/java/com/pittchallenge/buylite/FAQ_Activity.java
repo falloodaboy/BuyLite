@@ -35,7 +35,7 @@ public class FAQ_Activity extends AppCompatActivity {
         }
         else
             Log.d(TAG, "actionbar is null! ");
-        Log.d(TAG, "onStart: IsUserAuthenticated? " + (mAuth.getCurrentUser() == null));
+        datamodel.testDatabase();
     }
 
     @Override
