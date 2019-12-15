@@ -1,7 +1,9 @@
 package com.pittchallenge.buylite.models;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.pittchallenge.buylite.BuyOrderItem;
@@ -14,9 +16,10 @@ import java.util.Map;
 public class BuyOrder implements Parcelable {
     public String name;
     public String host;
-    public  LatLng pickuplocation;
+    public OrderLatLng pickuplocation;
     public List<OrderPayload> customers;
     public List<BuyOrderItem> itemcatalog;
+    public String key;
 
     public BuyOrder(){
 
@@ -29,9 +32,20 @@ public class BuyOrder implements Parcelable {
         itemcatalog = new ArrayList<>();
         in.readList(customers,OrderPayload.class.getClassLoader());
         in.readList(itemcatalog, BuyOrderItem.class.getClassLoader());
+        String str = in.readString();
+
+        if(str != null){
+            String[] arr = str.split(",");
+            pickuplocation = new OrderLatLng(Double.parseDouble(arr[0]), Double.parseDouble(arr[1]));
+        }
+        else
+            Log.d("BuyOrder: ", "The OrderLatLng string is null for some reason");
+
+        if(pickuplocation == null)
+            Log.d("BuyOrder: ", "Pickuplocation OrderLatLng object is null in parcel constructor.");
     }
 
-    public BuyOrder(String name, String host, LatLng loc){
+    public BuyOrder(String name, String host, OrderLatLng loc){
         this.name = name;
         this.host = host;
         this.pickuplocation = loc;
@@ -87,8 +101,19 @@ public class BuyOrder implements Parcelable {
             parcel.writeString(host);
             parcel.writeList(customers);
             parcel.writeList(itemcatalog);
+            parcel.writeString(pickuplocation.toString());
+
     }
 
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        builder.append(name + "\n");
+        builder.append(host + "\n");
+        builder.append(customers + "\n");
+        builder.append(itemcatalog + "\n");
+        builder.append(pickuplocation + "\n");
+        return builder.toString();
+    }
 
 
 }

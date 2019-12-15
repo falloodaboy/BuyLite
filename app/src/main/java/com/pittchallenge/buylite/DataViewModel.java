@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
@@ -18,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.pittchallenge.buylite.models.BuyOrder;
+import com.pittchallenge.buylite.models.OrderLatLng;
 import com.pittchallenge.buylite.models.OrderPayload;
 
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ public class DataViewModel extends ViewModel {
     private static final String TAG = "DataViewModel: ";
     private MutableLiveData<List<BuyOrder>> listwatcher;
     private DatabaseReference buyorder;
-    private ChildEventListener listener;
+    private ValueEventListener listener;
 
     public DataViewModel(){
 
@@ -48,6 +50,13 @@ public class DataViewModel extends ViewModel {
      **/
     public void attachObserverToItemList(LifecycleOwner owner, Observer<List<BuyOrder>> observer){
         listwatcher.observe(owner, observer);
+    }
+
+    public MutableLiveData<List<BuyOrder>> exposeList(){
+        if(listwatcher == null)
+            return listwatcher = new MutableLiveData<>();
+        else
+            return listwatcher;
     }
 
     /**
@@ -76,15 +85,20 @@ public class DataViewModel extends ViewModel {
     * MutableLiveData listwatcher with it. listwatcher
     * cannot be null.
     **/
-    protected void setBuyOrdersList(){
+    private void setBuyOrdersList(DatabaseReference ref){
         ValueEventListener orderlistener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<BuyOrder> list = new ArrayList<>();
-               for(DataSnapshot snap : dataSnapshot.getChildren()){
-                    list.add(snap.getValue(BuyOrder.class));
-               }
-                listwatcher.setValue(list);
+                List<BuyOrder> setList = new ArrayList<>();
+                for(DataSnapshot snap : dataSnapshot.getChildren()){
+                    if(snap != null){
+                        setList.add((BuyOrder) snap.getValue());
+                    }
+                }
+                if(!setList.isEmpty())
+                    setListWatcher(setList);
+                else
+                    Log.d(TAG, "onDataChange: BuyOrder List DataSnapshot is null for some reason.");
             }
 
             @Override
@@ -94,52 +108,50 @@ public class DataViewModel extends ViewModel {
 
             }
         };
-        Log.d(TAG, "setBuyOrdersList: listwatcher: " + listwatcher);
+        ref.addValueEventListener(orderlistener);
+
 
     }
-
+    private void setListWatcher(List<BuyOrder> list){
+        listwatcher.setValue(list);
+        Log.d(TAG, "setListWatcher: setListWatcher has been called. listwatcher: " + listwatcher.getValue());
+    }
 
 
     public void testDatabase(){
         buyorder = mBase.getReference().child("BuyOrder");
         String key = buyorder.push().getKey();
         Map<String, Object> newmap = new HashMap<>();
-        BuyOrder hold = new BuyOrder("BuyOrder1","Jason Todd",new LatLng(2.773,2.771));
+        BuyOrder hold = new BuyOrder("BuyOrder1","Jason Todd",new OrderLatLng(2.773,2.771));
         hold.addCustomer(new OrderPayload("Ashton Kutcher", "Ketchup", 2));
         hold.addToCatalog(new BuyOrderItem("Ketchup", "Heinz Ketchup."));
-
+        hold.key = key;
         newmap.put(key, hold);
-        newmap.put("order_id", key);
-        listener = buyorder.addChildEventListener(new ChildEventListener() {
+
+            listener = buyorder.child(key).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d(TAG, " onChildAdded: Successfully added data");
-                //Log.d(TAG, dataSnapshot.getValue().toString());
-            }
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot != null){
+                    BuyOrder order = dataSnapshot.getValue(BuyOrder.class);
+                    if(order != null){
+                        Log.d(TAG, "onDataChange: \n" + order.toString());
+                    }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    else
+                        Log.d(TAG, "onDataChange: BuyOrder is null");
+                }
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: Failed to add data.");
-                Log.d(TAG, "onCancelled: " + databaseError);
+                Log.d(TAG, "onCancelled: The Data Operation was cancelled");
+                Log.d(TAG, "onCancelled: Reason: " + databaseError);
             }
         });
+        setBuyOrdersList(buyorder);
         buyorder.updateChildren(newmap);
-        setBuyOrdersList();
+
     }
 }
 

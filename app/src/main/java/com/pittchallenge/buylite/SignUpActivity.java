@@ -40,7 +40,7 @@ public class SignUpActivity extends AppCompatActivity {
         memail = findViewById(R.id.SignUpEmailField);
         mpassword = findViewById(R.id.SignUpPasswordField);
         musername = findViewById(R.id.SignUpUserNameField);
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance(); //activities should only be observing data and not changing it. can this be called from the viewmodel.
         if(savedInstanceState != null){
             memail.setText(savedInstanceState.getString("EMAIL"));
             mpassword.setText(savedInstanceState.getString("PASSWORD"));
@@ -74,8 +74,10 @@ public class SignUpActivity extends AppCompatActivity {
                                   else{
                                       usermodel.UpStreamUser(task.getResult().getUser(), musername.getText().toString());
                                       Log.d(TAG, "onComplete: User SignUp Successful");
+                                      usermodel.setUser(task.getResult().getUser()); //<-- need this to make sure all cases of user object in ViewModel are covered.
+                                      //startActivity(new Intent(SignUpActivity.this, LandingPage.class )); <-- need to set this up after creating the landing page.
                                       SignUpActivity.this.finish();
-                                      //startActivity(new Intent(SignUpActivity.this, LandingPage.class )); <--
+
                                   }
                                 }
                             });
@@ -104,6 +106,7 @@ public class SignUpActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.app_options, menu);
+        menu.removeItem(R.id.searchwidget);
         return true;
     }
 
@@ -115,7 +118,7 @@ public class SignUpActivity extends AppCompatActivity {
                     startActivity(new Intent(this, FAQ_Activity.class));
                     return true;
                 case R.id.SIGNOUT:
-                    if(mAuth.getCurrentUser() != null){
+                    if(mAuth.getCurrentUser() != null) {
                         mAuth.signOut();
                     }
                     return true;

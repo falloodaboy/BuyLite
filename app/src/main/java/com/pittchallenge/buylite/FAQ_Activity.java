@@ -35,23 +35,27 @@ public class FAQ_Activity extends AppCompatActivity {
         }
         else
             Log.d(TAG, "actionbar is null! ");
-        datamodel.testDatabase();
+
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-     //   datamodel.testDatabase();
+    protected void onResume() {
+        super.onResume();
+        datamodel.testDatabase();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.app_options, menu);
+        menu.removeItem(R.id.FAQ);
+        menu.removeItem(R.id.searchwidget);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
         if(item.getItemId() == android.R.id.home){
             this.finish();
             return true;
