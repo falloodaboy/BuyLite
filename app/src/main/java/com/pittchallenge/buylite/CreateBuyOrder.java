@@ -20,6 +20,9 @@ import com.pittchallenge.buylite.models.BuyOrder;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activity that returns an intent with the BuyOrder object in it to the Activity that called this one.
+ */
 public class CreateBuyOrder extends AppCompatActivity {
       private int GET_ORDER = 0;
       private String TAG = "CreateBuyOrder: ";
@@ -67,15 +70,18 @@ public class CreateBuyOrder extends AppCompatActivity {
                     BuyOrder order = new BuyOrder(namefield.getText().toString(), usermodel.getUserName(), new OrderLatLng(2.111,2.222));
                     for(int i=0; i < lister.size(); i++){
                         order.addToCatalog(lister.get(i));
-                        Intent newBuyOrder = new Intent();
-                        newBuyOrder.putExtra("NEW_BUYORDER", order);
-                        setResult(RESULT_OK);
-                        CreateBuyOrder.this.finish();
-                        //((CreateBuyOrder)getApplicationContext()).finish();
-
+                        //pulled stuff out of this loop and put it outside in the onClick() method.
                     }
-                }
 
+                    Intent newBuyOrder = new Intent();
+                    newBuyOrder.putExtra("NEW_BUYORDER", order);
+                    setResult(RESULT_OK);
+                    CreateBuyOrder.this.finish();
+                    //((CreateBuyOrder)getApplicationContext()).finish();
+                }
+                else{
+
+                }
             }
         });
     }

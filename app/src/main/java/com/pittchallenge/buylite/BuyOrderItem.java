@@ -14,6 +14,9 @@ public class BuyOrderItem {
         description = paramdescription;
     }
 
-
+    //any user getting this string should split it with the , as the delimiter
+    public String toString(){
+        return itemName + "," + description;
+    }
 
 }

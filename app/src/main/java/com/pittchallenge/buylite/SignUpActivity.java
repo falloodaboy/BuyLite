@@ -25,7 +25,7 @@ public class SignUpActivity extends AppCompatActivity {
     private Button signUpButton;
     private FirebaseAuth mAuth;
     private final static String TAG  = "SignUpActivity: ";
-    private EditText memail, mpassword, musername;
+    private EditText memail, mpassword, musername, mphone;
     private DataViewModel datamodel;
 
     @Override
@@ -35,12 +35,13 @@ public class SignUpActivity extends AppCompatActivity {
         signUpButton = findViewById(R.id.SignUpSubmitButton);
 
         usermodel = ViewModelProviders.of(this).get(UserViewModel.class);
-        datamodel = ViewModelProviders.of(this).get(DataViewModel.class);
+        //datamodel = ViewModelProviders.of(this).get(DataViewModel.class);
 
         memail = findViewById(R.id.SignUpEmailField);
         mpassword = findViewById(R.id.SignUpPasswordField);
         musername = findViewById(R.id.SignUpUserNameField);
-        mAuth = FirebaseAuth.getInstance(); //activities should only be observing data and not changing it. can this be called from the viewmodel.
+        mphone = findViewById(R.id.SignUpPhoneField);
+       // mAuth = FirebaseAuth.getInstance(); //activities should only be observing data and not changing it. can this be called from the viewmodel.
         if(savedInstanceState != null){
             memail.setText(savedInstanceState.getString("EMAIL"));
             mpassword.setText(savedInstanceState.getString("PASSWORD"));
@@ -58,38 +59,45 @@ public class SignUpActivity extends AppCompatActivity {
                 {
                     Toast.makeText(getApplicationContext(), "*Password must contain a number or *", Toast.LENGTH_SHORT).show();
                 }
-                else{
+                else{   /*SignUpActivity.this.SignUpUser*/
+                usermodel.SignUpUser(memail.getText().toString(), mpassword.getText().toString(), musername.getText().toString()
+                        , new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if(!task.isSuccessful()){
+                                    memail.setText("");
+                                    mpassword.setText("");
+                                    musername.setText("");
+                                    mphone.setText("");
+                                    Toast.makeText(getApplicationContext(), "Looks like something went wrong with the Sign Up", Toast.LENGTH_SHORT).show();
 
-                    SignUpActivity.this.SignUpUser(memail.getText().toString(), mpassword.getText().toString()
-                            , musername.getText().toString(), new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if(!task.isSuccessful()){
-                                      memail.setText("");
-                                      mpassword.setText("");
-                                      musername.setText("");
-                                      Toast.makeText(getApplicationContext(), "Looks like something went wrong with the Sign Up", Toast.LENGTH_SHORT).show();
-
-                                  }
-                                  else{
-                                      usermodel.UpStreamUser(task.getResult().getUser(), musername.getText().toString());
-                                      Log.d(TAG, "onComplete: User SignUp Successful");
-                                      usermodel.setUser(task.getResult().getUser()); //<-- need this to make sure all cases of user object in ViewModel are covered.
-                                      //startActivity(new Intent(SignUpActivity.this, LandingPage.class )); <-- need to set this up after creating the landing page.
-                                      SignUpActivity.this.finish();
-
-                                  }
                                 }
-                            });
+                                else{
+//                                     usermodel.getUser().getValue().sendEmailVerification();
+////                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
+////                                         @Override
+////                                         public void onComplete(@NonNull Task<Void> task) {
+////                                             if()
+////                                         }
+////                                     });
+                                     usermodel.UpStreamUser(task.getResult().getUser(), musername.getText().toString(), mphone.getText().toString());
+                                    Log.d(TAG, "onComplete: User SignUp Successful");
+                                    //   usermodel.setUser(task.getResult().getUser()); //<-- need this to make sure all cases of user object in ViewModel are covered.
+                                    //startActivity(new Intent(SignUpActivity.this, LandingPage.class )); <-- need to set this up after creating the landing page.
+                                    SignUpActivity.this.finish();
+                                }
+                            }
+                        });
+
                 }
 
             }
         });
     }
-    protected void SignUpUser(String email, String password, String username, @NonNull OnCompleteListener<AuthResult> listener ){
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(listener);
-
-    }
+//    protected void SignUpUser(String email, String password, String username, @NonNull OnCompleteListener<AuthResult> listener ){
+//        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(listener);
+//
+//    }
 
     private boolean containsNumber(String s){
         boolean response = false;
@@ -107,6 +115,7 @@ public class SignUpActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.app_options, menu);
         menu.removeItem(R.id.searchwidget);
+        menu.removeItem(R.id.start_frag_test);
         return true;
     }
 
@@ -118,8 +127,9 @@ public class SignUpActivity extends AppCompatActivity {
                     startActivity(new Intent(this, FAQ_Activity.class));
                     return true;
                 case R.id.SIGNOUT:
-                    if(mAuth.getCurrentUser() != null) {
-                        mAuth.signOut();
+                    if(/*mAuth.getCurrentUser()*/ usermodel.getUser() != null) {
+                        //mAuth.signOut();
+                        usermodel.signOut();
                     }
                     return true;
                 default:

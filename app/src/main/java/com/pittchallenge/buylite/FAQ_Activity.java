@@ -20,16 +20,17 @@ import com.google.firebase.auth.FirebaseAuth;
 public class FAQ_Activity extends AppCompatActivity {
         private ActionBar actionbar;
         private DataViewModel datamodel;
+        private UserViewModel usermodel;
         private static final String TAG = "FAQ_Activity";
-        private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_faq_);
         actionbar = getSupportActionBar();
-        datamodel = ViewModelProviders.of(this).get(DataViewModel.class);
-        mAuth = FirebaseAuth.getInstance();
+       // datamodel = ViewModelProviders.of(this).get(DataViewModel.class);
+        usermodel = ViewModelProviders.of(this).get(UserViewModel.class);
+
         if(actionbar != null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
         }
@@ -41,7 +42,7 @@ public class FAQ_Activity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        datamodel.testDatabase();
+        //datamodel.testDatabase();
     }
 
     @Override
@@ -61,18 +62,23 @@ public class FAQ_Activity extends AppCompatActivity {
             return true;
         }
         else if(item.getItemId() == R.id.SIGNOUT){
-            if(mAuth.getCurrentUser() != null) {
-                mAuth.signOut();
+            if(usermodel.getUser() != null) {
+                //mAuth.signOut();
+                usermodel.signOut();
                 Toast.makeText(getApplicationContext(), "Signed Out User", Toast.LENGTH_SHORT).show();
                 this.finish();
             }
             return true;
         }
         else if(item.getItemId() == R.id.CREATEBUYORDER){
-            if(mAuth.getCurrentUser() != null){
+            if(usermodel.getUser() != null){
                 startActivity(new Intent(getApplicationContext(), CreateBuyOrder.class));
 
             }
+            return true;
+        }
+        else if(item.getItemId() == R.id.start_frag_test){
+            startActivity(new Intent(this, FragmentBaseTest.class));
             return true;
         }
         else{

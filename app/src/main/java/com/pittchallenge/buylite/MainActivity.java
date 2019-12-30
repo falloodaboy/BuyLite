@@ -17,21 +17,23 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
     private UserViewModel usermodel;
     private EditText memail, mpassword;
-    private FirebaseAuth mAuth;
+    //private FirebaseAuth mAuth;
     private static String TAG = "MainActivity: ";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true); //keep an eye on this when working on other code.
         usermodel = ViewModelProviders.of(this).get(UserViewModel.class);
         memail = findViewById(R.id.EmailTextField);
         mpassword = findViewById(R.id.PasswordTextField);
-        mAuth = FirebaseAuth.getInstance();
+       // mAuth = FirebaseAuth.getInstance(); //should not get instance in Activity. Must be relegated to Repository.
 
         if(savedInstanceState != null){
             memail.setText(savedInstanceState.getString("EMAIL"));
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void SignInUser(View view){
-        this.SignInUser(memail.getText().toString(), mpassword.getText().toString(), new OnCompleteListener<AuthResult>() {
+        /*this.SignInUser*/usermodel.SignInUser(memail.getText().toString(), mpassword.getText().toString(), new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "onComplete: User SignIn Successful.");
                     memail.setText("");
                     mpassword.setText("");
-                    usermodel.setUser(task.getResult().getUser());
+                    //usermodel.setUser(task.getResult().getUser());
                 }
 
                 else{
@@ -77,16 +79,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if(mAuth.getCurrentUser() != null){
-            mAuth.signOut();
+        if(/*mAuth.getCurrentUser()*/ usermodel.getUser() != null){
+            //mAuth.signOut();
+            usermodel.signOut();
         }
         super.onDestroy();
     }
 
-    protected void SignInUser(String email, String password, @NonNull OnCompleteListener<AuthResult> listener){
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(listener);
-
-    }
+//    protected void SignInUser(String email, String password, @NonNull OnCompleteListener<AuthResult> listener){
+//        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(listener);
+//
+//    }
 
 }
 // usermodel.SignInUser(memail.getText().toString(), mpassword.getText().toString(), new OnCompleteListener<AuthResult>() {

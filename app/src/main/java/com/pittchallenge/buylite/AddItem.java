@@ -39,7 +39,7 @@ public class AddItem extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(TextUtils.isEmpty(namefield.toString()))
-                    Toast.makeText(getApplicationContext(), "Name field cannot be null", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Name field cannot be empty.", Toast.LENGTH_SHORT).show();
                 else{
                     Intent data = new Intent();
                     data.putExtra(NameOfItem, namefield.getText().toString());
