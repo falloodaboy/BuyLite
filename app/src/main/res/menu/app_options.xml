@@ -9,6 +9,9 @@
         android:id="@+id/SIGNOUT"
         android:title="Sign Out" />
     <item
+        android:id="@+id/start_frag_test"
+        android:title="Start Frag Test " />
+    <item
         android:id="@+id/CREATEBUYORDER"
         android:title="CreateBuyOrder" />
 
@@ -16,5 +19,5 @@
         android:title="@string/search_title"
         android:icon="@drawable/ic_search_grey_24dp"
         app:showAsAction="collapseActionView|ifRoom"
-        app:actionViewClass="android.widget.SearchView" />
+        app:actionViewClass="androidx.appcompat.widget.SearchView" />
 </menu>

@@ -13,6 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This Class represents an entity which consists of the host, list of customerPayloads, and ItemCatalog for the database.
+ * It also has the pickup location that the host sets. It has a key which is the unique identity for a particular instance
+ * when pushing it to the Database.
+ */
 public class BuyOrder implements Parcelable {
     public String name;
     public String host;
@@ -113,7 +118,15 @@ public class BuyOrder implements Parcelable {
         builder.append(itemcatalog + "\n");
         builder.append(pickuplocation + "\n");
         return builder.toString();
+
     }
 
+    public String getCatalog(){
+        StringBuilder builder = new StringBuilder();
+        for(BuyOrderItem i : itemcatalog){
+            builder.append(i + ",");
+        }
+        return itemcatalog.toString();
+    }
 
 }

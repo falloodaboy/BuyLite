@@ -11,8 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ActionMenuView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -53,35 +55,46 @@ public class BuyOrderListFragment extends Fragment implements BuyOrderFragListAd
             //required for building fragment
          }
 
+//    @Override
+//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+//        super.onViewStateRestored(savedInstanceState);
+//        if(savedInstanceState != null){
+//            if(savedInstanceState.getString("SEARCH") != null){
+//                if(search != null){
+//                    search.setQuery(savedInstanceState.getString("SEARCH"), false);
+//                }
+//                else{
+//                    Log.d(TAG, "onViewStateRestored: Search Widget is null for some reason.");
+//                }
+//            }
+//        }
+//        else{
+//            Log.d(TAG, "onViewStateRestored: bundle is null");
+//        }
+//
+//    }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+
+        orderlist = view.findViewById(R.id.fragbuyorderlist);
+        datamodel = ViewModelProviders.of(this).get(DataViewModel.class);
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-            //super.onCreate(savedInstanceState);
-       View view  = inflater.inflate(R.layout.fragment_buy_order_list, container, false);
-       orderlist = view.findViewById(R.id.fragbuyorderlist);
-       datamodel = ViewModelProviders.of(this).get(DataViewModel.class);
-//       Toolbar searchcontainer = view.findViewById(R.id.SearchContainer);
-      // setHasOptionsMenu(true);
-       dummylist = new ArrayList<>();
-       emptyrecyclerdisplay = view.findViewById(R.id.EmptyContainerFragmentText);
-       emptyrecyclerdisplay.setText(R.string.no_buyorders_frag_list);
-       list = datamodel.getBuyOrderList();
+        dummylist = new ArrayList<>();
+        emptyrecyclerdisplay = view.findViewById(R.id.EmptyContainerFragmentText);
+        emptyrecyclerdisplay.setText(R.string.no_buyorders_frag_list);
+        list = datamodel.getBuyOrderList();
 
         for(int i=0; i < 20; i++){
             dummylist.add(new BuyOrder("BuyOrder " + i, "George Lucas", new OrderLatLng(2.0, 1.0)));
         }
         orderlist.setLayoutManager(new LinearLayoutManager(getContext()));
-//        dumadapt = new DummyAdapter();
-//        orderlist.setAdapter(dumadapt);
-       adapter = new BuyOrderFragListAdapter(/*list.getValue()*/ dummylist, datamodel, this);
-//     //  adapter = new BuyOrderFragListAdapter(datamodel.exposeList().getValue()); //DataModel Does not expose list anymore.
-       orderlist.setAdapter(adapter);
+        adapter = new BuyOrderFragListAdapter(/*list.getValue()*/ dummylist, datamodel, this);
+       //  adapter = new BuyOrderFragListAdapter(datamodel.exposeList().getValue()); //DataModel Does not expose list anymore.
+        orderlist.setAdapter(adapter);
 //
 //       Undo this once ready to test with real data.
 //       if(list.getValue() == null  || list.getValue().isEmpty() ){
@@ -91,28 +104,6 @@ public class BuyOrderListFragment extends Fragment implements BuyOrderFragListAd
 //
 //            }
 //       }
-       return view;
-    }
-
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-//        if(list.getValue() != null && list.getValue().isEmpty()){
-//            if(emptyrecyclerdisplay.getVisibility() == View.GONE){
-//                emptyrecyclerdisplay.setVisibility(View.VISIBLE);
-//                orderlist.setVisibility(View.INVISIBLE);
-//            }
-//        }
-
-    }
-
-
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
 
         if(list != null){
             list.observe(this, new Observer<List<BuyOrder>>() {
@@ -128,16 +119,36 @@ public class BuyOrderListFragment extends Fragment implements BuyOrderFragListAd
         }
         else
             Log.d(TAG, "onAttach: LiveData buyorder list is null for some reason.");
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+       return inflater.inflate(R.layout.fragment_buy_order_list, container, false);
+    }
 
 
-//
+
+    @Override
+    public void onResume() {
+        super.onResume();
+            
+//        if(list.getValue() != null && list.getValue().isEmpty()){
+//            if(emptyrecyclerdisplay.getVisibility() == View.GONE){
+//                emptyrecyclerdisplay.setVisibility(View.VISIBLE);
+//                orderlist.setVisibility(View.INVISIBLE);
+//            }
+//        }
 
     }
+
+
+
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.app_options, menu);
         search = (SearchView) menu.findItem(R.id.searchwidget).getActionView();
+
 
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -167,4 +178,15 @@ public class BuyOrderListFragment extends Fragment implements BuyOrderFragListAd
        // Intent intent = new Intent();
         Log.d(TAG, "onBuyOrderDetailsClick: ViewHolder or imageView have been clicked.");
     }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(search != null && search.isFocused()){
+            outState.putString("SEARCH", search.getQuery().toString());
+            Log.d(TAG, "onSaveInstanceState: put search in outState");
+        }
+
+    }
+
 }

@@ -11,7 +11,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".FragmentBaseTest"
-            android:label="@string/title_activity_fragment_base_test"></activity>
+            android:label="@string/title_activity_fragment_base_test"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".AddItem" />
         <activity android:name=".CreateBuyOrder" />
         <activity android:name=".FAQ_Activity" />

@@ -6,4 +6,6 @@
     <string name="search_title">SearchWidget</string>
     <string name="app_label">BuyLite</string>
     <string name="search_hint">Search BuyOrders</string>
+    <string name="title_activity_fragment_base_test">FragmentBaseTest</string>
+    <string name= "no_buyorders_frag_list">No BuyOrders available at this moment.</string>
 </resources>
