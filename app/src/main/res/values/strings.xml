@@ -2,4 +2,8 @@
     <string name="app_name">BuyLite</string>
     <string name="sign_up_text">Sign Up</string>
     <string name="faq_text_header">Frequently Asked Questions</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_tabbed_landing_page">TabbedLandingPage</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
 </resources>
